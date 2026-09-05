@@ -64,6 +64,37 @@ El token devuelto por login/registro se mantiene solamente en memoria y se enví
 
 Primero levante SQL Server y la API .NET en el puerto esperado.
 
+### 1. Levantar la API y dejar esa terminal abierta
+
+```powershell
+cd "C:\Users\serra\source\repos\ApiWellsImportCars\ApiWellsImportCars"
+dotnet run --project ApiWellsImportCars.csproj --launch-profile http
+```
+
+Espere el mensaje `Now listening on: http://localhost:5142` y compruebe `http://localhost:5142/swagger`. Cerrar esa terminal apaga la API.
+
+### 2. Entrar a la carpeta Flutter
+
+```powershell
+cd "C:\Users\serra\Documents\Codex\2026-08-31\files-pasted-by-the-user-necesito\WellsImportCarsApp"
+```
+
+### URL seleccionada automáticamente
+
+La app ahora elige una dirección válida según el destino:
+
+- Windows, Chrome y Edge: `http://localhost:5142`
+- Emulador Android: `http://10.0.2.2:5142`
+- Teléfono físico: requiere `--dart-define` con la IP Wi-Fi del PC
+
+En esta computadora el SDK está instalado en:
+
+```text
+C:\Users\serra\flutter\3.38.7\bin\flutter.bat
+```
+
+Si `flutter` no es reconocido, use temporalmente la ruta completa mostrada en los comandos siguientes o agregue `C:\Users\serra\flutter\3.38.7\bin` al `PATH` de Windows.
+
 ### Android Emulator
 
 El valor predeterminado es:
@@ -73,8 +104,8 @@ http://10.0.2.2:5142
 ```
 
 ```powershell
-flutter pub get
-flutter run
+& "C:\Users\serra\flutter\3.38.7\bin\flutter.bat" pub get
+& "C:\Users\serra\flutter\3.38.7\bin\flutter.bat" run
 ```
 
 Android tiene permiso de Internet. El tráfico HTTP local está habilitado solamente en el manifest `debug`; para producción debe utilizar HTTPS.
@@ -82,7 +113,7 @@ Android tiene permiso de Internet. El tráfico HTTP local está habilitado solam
 ### Windows
 
 ```powershell
-flutter run -d windows --dart-define=API_BASE_URL=http://localhost:5142
+& "C:\Users\serra\flutter\3.38.7\bin\flutter.bat" run -d windows
 ```
 
 ### Chrome
@@ -90,18 +121,30 @@ flutter run -d windows --dart-define=API_BASE_URL=http://localhost:5142
 La API debe permitir el origen del servidor de desarrollo Flutter mediante CORS:
 
 ```powershell
-flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:5142
+& "C:\Users\serra\flutter\3.38.7\bin\flutter.bat" run -d chrome
 ```
 
 ### Teléfono físico
 
-Ejecute la API escuchando en la red local y sustituya `192.168.X.X` por la IP del PC:
+En una terminal exclusiva para la API, ejecútela escuchando en la red local:
 
 ```powershell
-flutter run --dart-define=API_BASE_URL=http://192.168.X.X:5142
+cd "C:\Users\serra\source\repos\ApiWellsImportCars\ApiWellsImportCars"
+$env:ASPNETCORE_URLS="http://0.0.0.0:5142"
+dotnet run --project ApiWellsImportCars.csproj --no-launch-profile
+```
+
+Después sustituya `192.168.X.X` por la IP Wi-Fi del PC (actualmente `192.168.1.9`, pero puede cambiar):
+
+```powershell
+& "C:\Users\serra\flutter\3.38.7\bin\flutter.bat" run -d ID_DEL_TELEFONO --dart-define=API_BASE_URL=http://192.168.X.X:5142
 ```
 
 El teléfono y el PC deben estar en la misma red y el firewall debe permitir el puerto. Nunca use `localhost` en el teléfono: apuntaría al propio teléfono.
+
+## Cuenta para iniciar sesión
+
+Flutter es el portal de clientes. Acepta únicamente una respuesta de login con `rol = Cliente` e `idCliente` válido. Una cuenta Administrador puede autenticarse correctamente en la API, pero Flutter la rechazará con el mensaje de que la aplicación es exclusiva para clientes. Cree la cuenta desde **Registrarse** en la app o use una cuenta Cliente existente.
 
 ## Verificación
 

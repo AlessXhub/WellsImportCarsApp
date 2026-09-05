@@ -63,12 +63,12 @@ class ApiService {
         'La API tardó demasiado en responder. Intenta nuevamente.',
       );
     } on SocketException {
-      throw const ApiException(
-        'No se pudo conectar con la API. Verifica que esté encendida y que la URL sea correcta.',
+      throw ApiException(
+        'No se pudo conectar con la API en ${ApiConfig.baseUrl}. Verifica que esté encendida y que la URL corresponda al dispositivo.',
       );
     } on http.ClientException {
-      throw const ApiException(
-        'No se pudo establecer comunicación con la API.',
+      throw ApiException(
+        'No se pudo establecer comunicación con la API en ${ApiConfig.baseUrl}.',
       );
     } on FormatException {
       throw const ApiException('La API devolvió una respuesta JSON no válida.');
